@@ -14,7 +14,7 @@ public class RefreshFCMSubscriptionsService extends IntentService {
     private static final String ACTION_REFRESH_FCM_SUBSCRIPTIONS = "ACTION_REFRESH_FCM_SUBSCRIPTIONS";
     private FirebaseMessaging messaging;
 
-    private RefreshFCMSubscriptionsService() {
+    public RefreshFCMSubscriptionsService() {
         super(RefreshFCMSubscriptionsService.class.getSimpleName());
     }
 

@@ -76,7 +76,7 @@ public class CaptureIntentService extends IntentService {
         return intent;
     }
 
-    private CaptureIntentService() {
+    public CaptureIntentService() {
         super(TAG);
     }
 
