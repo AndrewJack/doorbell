@@ -1,0 +1,2 @@
+# This is an example app.properties file.
+bucket_name=gs://app-name.appspot.com

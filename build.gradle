@@ -19,6 +19,70 @@ allprojects {
     }
 }
 
+project.ext.preDexLibs = !project.hasProperty('disablePreDex')
+
+subprojects {
+    project.plugins.whenPluginAdded { plugin ->
+        if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+            project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+        } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+            project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+        }
+    }
+
+    ext {
+        gitSha = { ->
+            try {
+                def stdout = new ByteArrayOutputStream()
+                exec {
+                    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                    standardOutput = stdout
+                }
+                return stdout.toString().trim()
+            } catch (ignored) {
+                return null;
+            }
+        }
+
+        def appPropsFile = file('.secrets/app.properties')
+        def debugKeyPropsFile = file('.secrets/keystore-debug.properties')
+        def releaseKeyPropsFile = file('.secrets/keystore-release.properties')
+
+        appProps = new Properties()
+        if (appPropsFile.exists()) {
+            appProps.load(new FileInputStream(appProps))
+        }
+
+        keyPropsDebug = new Properties()
+        if (debugKeyPropsFile.exists()) {
+            keyPropsDebug.load(new FileInputStream(debugKeyPropsFile))
+        }
+
+        keyPropsRelease = new Properties()
+        if (releaseKeyPropsFile.exists()) {
+            keyPropsRelease.load(new FileInputStream(releaseKeyPropsFile))
+        }
+
+        versionMajor = 0
+        versionMinor = 1
+        versionPatch = 0
+
+        targetSdk = 25
+        compileSdk = 25
+        minSdk = 24
+        buildTools = "25.0.1"
+        commonPlayServicesVersion = '10.0.1'
+        commonSupportLibraryVersion = '25.1.0'
+        daggerVersion = '2.7'
+        rxJavaVersion = '1.2.2'
+        rxAndroidVersion = '1.2.1'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

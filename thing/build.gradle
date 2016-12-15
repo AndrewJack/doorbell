@@ -1,0 +1,66 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion compileSdk
+    buildToolsVersion buildTools
+
+    defaultConfig {
+        applicationId "technology.mainthread.apps.watchkeeper"
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+        if (keyPropsDebug["store"] != null) {
+            debug {
+                storeFile keyPropsDebug["store"] != null ? file(keyPropsDebug["store"]) : null
+                keyAlias keyPropsDebug["alias"] ?: ""
+                storePassword keyPropsDebug["storePass"] ?: ""
+                keyPassword keyPropsDebug["pass"] ?: ""
+            }
+        }
+
+        release {
+            storeFile keyPropsRelease["store"] != null ? file(keyPropsRelease["store"]) : null
+            keyAlias keyPropsRelease["alias"] ?: ""
+            storePassword keyPropsRelease["storePass"] ?: ""
+            keyPassword keyPropsRelease["pass"] ?: ""
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            versionNameSuffix '_debug_' + gitSha()
+            applicationIdSuffix '.debug'
+            versionNameSuffix " debug"
+            resValue "string", "app_name", "Watchkeeper debug"
+        }
+        release {
+            if (keyPropsRelease["store"] != null) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "app_name", "Watchkeeper"
+        }
+    }
+}
+
+dependencies {
+    provided 'com.google.android.things:androidthings:0.1-devpreview'
+    compile "com.google.firebase:firebase-core:${commonPlayServicesVersion}"
+    compile "com.google.firebase:firebase-database:${commonPlayServicesVersion}"
+    compile 'com.google.android.things.contrib:driver-button:0.1'
+
+    compile 'com.google.apis:google-api-services-vision:v1-rev22-1.22.0'
+    compile 'com.google.api-client:google-api-client-android:1.22.0' exclude module: 'httpclient'
+    compile 'com.google.http-client:google-http-client-gson:1.22.0' exclude module: 'httpclient'
+}
+
+apply plugin: 'com.google.gms.google-services'

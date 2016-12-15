@@ -1,11 +1,7 @@
-Android Things Doorbell sample
+Watchkeeper
 =====================================
 
-The Android Things Doorbell sample demonstrates how to create a “smart” doorbell.
-The sample captures a button press from a user, obtains an image via a camera peripheral,
-processes the image data using Google’s Cloud Vision API, and uploads the image, Cloud Vision
-annotations and metadata to a Firebase database where it can be viewed by a companion app.
-
+The Android Things camera watchkeeper, when implemented it will take a picture upon receiving a push message.
 
 Pre-requisites
 --------------
@@ -22,11 +18,6 @@ Pre-requisites
     - jumper wires
     - 1 breadboard
 
-
-Schematics
-----------
-
-![Schematics](schematics.png)
 
 Setup and Build
 ===============
@@ -71,7 +62,7 @@ To run the `companionApp` module on your Android phone:
 License
 -------
 
-Copyright 2016 The Android Open Source Project, Inc.
+Copyright 2016 Andrew Jack & The Android Open Source Project, Inc.
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor
 license agreements.  See the NOTICE file distributed with this work for
