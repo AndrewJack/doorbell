@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package technology.mainthread.apps.watchkeeper;
+package technology.mainthread.apps.watchkeeper.camera;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
@@ -28,6 +29,8 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.util.Size;
 
@@ -59,7 +62,7 @@ public class DoorbellCamera {
     }
 
     private static class InstanceHolder {
-        private static DoorbellCamera mCamera = new DoorbellCamera();
+        private static final DoorbellCamera mCamera = new DoorbellCamera();
     }
 
     public static DoorbellCamera getInstance() {
@@ -69,6 +72,7 @@ public class DoorbellCamera {
     /**
      * Initialize the camera device
      */
+    @RequiresPermission(Manifest.permission.CAMERA)
     public void initializeCamera(Context context,
                                  Handler backgroundHandler,
                                  ImageReader.OnImageAvailableListener imageAvailableListener) {
@@ -106,25 +110,25 @@ public class DoorbellCamera {
      */
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
         @Override
-        public void onOpened(CameraDevice cameraDevice) {
+        public void onOpened(@NonNull CameraDevice cameraDevice) {
             Log.d(TAG, "Opened camera.");
             mCameraDevice = cameraDevice;
         }
 
         @Override
-        public void onDisconnected(CameraDevice cameraDevice) {
+        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
             Log.d(TAG, "Camera disconnected, closing.");
             cameraDevice.close();
         }
 
         @Override
-        public void onError(CameraDevice cameraDevice, int i) {
+        public void onError(@NonNull CameraDevice cameraDevice, int i) {
             Log.d(TAG, "Camera device error, closing.");
             cameraDevice.close();
         }
 
         @Override
-        public void onClosed(CameraDevice cameraDevice) {
+        public void onClosed(@NonNull CameraDevice cameraDevice) {
             Log.d(TAG, "Closed camera, releasing");
             mCameraDevice = null;
         }
@@ -153,10 +157,10 @@ public class DoorbellCamera {
     /**
      * Callback handling session state changes
      */
-    private CameraCaptureSession.StateCallback mSessionCallback =
+    private final CameraCaptureSession.StateCallback mSessionCallback =
             new CameraCaptureSession.StateCallback() {
                 @Override
-                public void onConfigured(CameraCaptureSession cameraCaptureSession) {
+                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     // The camera is already closed
                     if (mCameraDevice == null) {
                         return;
@@ -168,7 +172,7 @@ public class DoorbellCamera {
                 }
 
                 @Override
-                public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
+                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Log.w(TAG, "Failed to configure camera");
                 }
             };
@@ -196,21 +200,19 @@ public class DoorbellCamera {
             new CameraCaptureSession.CaptureCallback() {
 
                 @Override
-                public void onCaptureProgressed(CameraCaptureSession session,
-                                                CaptureRequest request,
-                                                CaptureResult partialResult) {
+                public void onCaptureProgressed(@NonNull CameraCaptureSession session,
+                                                @NonNull CaptureRequest request,
+                                                @NonNull CaptureResult partialResult) {
                     Log.d(TAG, "Partial result");
                 }
 
                 @Override
-                public void onCaptureCompleted(CameraCaptureSession session,
-                                               CaptureRequest request,
-                                               TotalCaptureResult result) {
-                    if (session != null) {
-                        session.close();
-                        mCaptureSession = null;
-                        Log.d(TAG, "CaptureSession closed");
-                    }
+                public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                               @NonNull CaptureRequest request,
+                                               @NonNull TotalCaptureResult result) {
+                    session.close();
+                    mCaptureSession = null;
+                    Log.d(TAG, "CaptureSession closed");
                 }
             };
 

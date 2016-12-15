@@ -1,2 +1,11 @@
 <resources>
+    <string-array name="notif_subscriptions_values">
+        <item>door-opened</item>
+        <item>door-closed</item>
+        <item>handset-activated</item>
+        <item>handset-deactivated</item>
+        <item>primed</item>
+        <item>unprimed</item>
+        <item>unlocked</item>
+    </string-array>
 </resources>
