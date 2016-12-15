@@ -1,2 +1,2 @@
 # This is an example app.properties file.
-bucket_name=gs://app-name.appspot.com
+cloud_vision_api_key=1234

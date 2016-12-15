@@ -13,6 +13,8 @@ android {
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
         multiDexEnabled true
+
+        buildConfigField 'String', 'CLOUD_VISION_API_KEY', appProps["cloud_vision_api_key"] != null ? appProps["cloud_vision_api_key"] : ''
     }
 
     compileOptions {
