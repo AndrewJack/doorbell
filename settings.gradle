@@ -1,1 +1,1 @@
-include ':app', ':companionApp'
+include ':app'
