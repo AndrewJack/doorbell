@@ -13,7 +13,9 @@
 
         <uses-library android:name="com.google.android.things" />
 
-        <activity android:name=".view.DoorbellActivity">
+        <activity
+            android:name=".view.CaptureActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,7 +44,6 @@
             </intent-filter>
         </service>
 
-        <service android:name=".service.CaptureIntentService" />
         <service android:name=".service.RefreshFCMSubscriptionsService" />
     </application>
 </manifest>

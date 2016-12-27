@@ -14,7 +14,7 @@ android {
 
         multiDexEnabled true
 
-        buildConfigField 'String', 'CLOUD_VISION_API_KEY', appProps["cloud_vision_api_key"] != null ? appProps["cloud_vision_api_key"] : ''
+        buildConfigField 'String', 'CLOUD_VISION_API_KEY', appProps["cloud_vision_api_key"] != null ? "\"${appProps["cloud_vision_api_key"]}\"" : '""'
     }
 
     compileOptions {
@@ -65,6 +65,7 @@ dependencies {
     compile "com.google.firebase:firebase-core:${commonPlayServicesVersion}"
     compile "com.google.firebase:firebase-database:${commonPlayServicesVersion}"
     compile "com.google.firebase:firebase-messaging:${commonPlayServicesVersion}"
+    compile "com.google.firebase:firebase-storage:${commonPlayServicesVersion}"
     compile 'com.google.android.things.contrib:driver-button:0.1'
 
     compile 'com.google.apis:google-api-services-vision:v1-rev22-1.22.0'
