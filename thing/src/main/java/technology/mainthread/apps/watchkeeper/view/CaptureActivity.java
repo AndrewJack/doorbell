@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.media.Image;
 import android.media.ImageReader;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,8 +21,8 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.subscriptions.Subscriptions;
+import technology.mainthread.apps.watchkeeper.BuildConfig;
 import technology.mainthread.apps.watchkeeper.camera.DoorbellCamera;
 import technology.mainthread.apps.watchkeeper.data.CaptureEvent;
 
@@ -47,14 +46,6 @@ public class CaptureActivity extends Activity {
      * An additional thread for running Camera tasks that shouldn't block the UI.
      */
     private HandlerThread mCameraThread;
-    /**
-     * A {@link Handler} for running Cloud tasks in the background.
-     */
-//    private Handler mCloudHandler;
-    /**
-     * An additional thread for running Cloud tasks that shouldn't block the UI.
-     */
-//    private HandlerThread mCloudThread;
 
     /**
      * Listener for new camera images.
@@ -93,10 +84,6 @@ public class CaptureActivity extends Activity {
         mCameraThread.start();
         mCameraHandler = new Handler(mCameraThread.getLooper());
 
-//        mCloudThread = new HandlerThread("CloudThread");
-//        mCloudThread.start();
-//        mCloudHandler = new Handler(mCloudThread.getLooper());
-
         // Camera code is complicated, so we've shoved it all in this closet class for you.
         mCamera = DoorbellCamera.getInstance();
         mCamera.initializeCamera(this, mCameraHandler, mOnImageAvailableListener);
@@ -112,7 +99,6 @@ public class CaptureActivity extends Activity {
         mCamera.shutDown();
 
         mCameraThread.quitSafely();
-//        mCloudThread.quitSafely();
         subscription.unsubscribe();
     }
 
@@ -122,33 +108,19 @@ public class CaptureActivity extends Activity {
     private void onPictureTaken(final byte[] imageBytes) {
         Log.d(TAG, "onPictureTaken");
         if (imageBytes != null) {
-            StorageReference storageRef = mStorage.getReferenceFromUrl("gs://gatekeeper-kew.appspot.com").child(String.format("%s.jpg", UUID.randomUUID()));
+            String fileName = String.format("%s.jpg", UUID.randomUUID());
+            StorageReference storageRef = mStorage.getReferenceFromUrl(BuildConfig.BUCKET_URL).child(fileName);
 
             UploadTask uploadTask = storageRef.putBytes(imageBytes);
             uploadTask.addOnCompleteListener(task -> {
                 UploadTask.TaskSnapshot result = task.getResult();
-                if (result != null && result.getDownloadUrl() != null) {
-                    Uri downloadUrl = result.getDownloadUrl();
+                if (result != null) {
                     final DatabaseReference log = mDatabase.getReference("logs").push();
                     // upload image to firebase
-                    log.child("url").setValue(downloadUrl.toString());
+                    log.child("fileName").setValue(fileName);
                     log.child("timestamp").setValue(ServerValue.TIMESTAMP);
                 }
             });
-
-//            mCloudHandler.post(() -> {
-//                Log.d(TAG, "sending image to cloud vision");
-//                // annotate image by uploading to Cloud Vision API
-//                try {
-//                    Map<String, Float> annotations = CloudVisionUtils.annotateImage(imageBytes);
-//                    Log.d(TAG, "cloud vision annotations:" + annotations);
-//                    if (annotations != null) {
-//                        log.child("annotations").setValue(annotations);
-//                    }
-//                } catch (IOException e) {
-//                    Log.e(TAG, "Cloud Vison API error: ", e);
-//                }
-//            });
         }
     }
 }

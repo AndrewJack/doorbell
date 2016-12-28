@@ -1,5 +1,6 @@
 <resources>
     <string-array name="notif_subscriptions_values">
+        <item>capture</item>
         <item>door-opened</item>
         <item>door-closed</item>
         <item>handset-activated</item>

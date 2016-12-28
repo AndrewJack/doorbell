@@ -47,13 +47,13 @@ subprojects {
             }
         }
 
-        def appPropsFile = file('.secrets/app.properties')
-        def debugKeyPropsFile = file('.secrets/keystore-debug.properties')
-        def releaseKeyPropsFile = file('.secrets/keystore-release.properties')
+        def appPropsFile = file('../.secrets/props/app.properties')
+        def debugKeyPropsFile = file('../.secrets/props/keystore-debug.properties')
+        def releaseKeyPropsFile = file('../.secrets/props/keystore-release.properties')
 
         appProps = new Properties()
         if (appPropsFile.exists()) {
-            appProps.load(new FileInputStream(appProps))
+            appProps.load(new FileInputStream(appPropsFile))
         }
 
         keyPropsDebug = new Properties()

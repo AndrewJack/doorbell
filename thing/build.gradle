@@ -15,6 +15,7 @@ android {
         multiDexEnabled true
 
         buildConfigField 'String', 'CLOUD_VISION_API_KEY', appProps["cloud_vision_api_key"] != null ? "\"${appProps["cloud_vision_api_key"]}\"" : '""'
+        buildConfigField 'String', 'BUCKET_URL', appProps["bucket_url"] != null ? "\"${appProps["bucket_url"]}\"" : '""'
     }
 
     compileOptions {

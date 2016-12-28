@@ -1,5 +1,7 @@
 package technology.mainthread.apps.watchkeeper.service;
 
+import android.text.TextUtils;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -9,7 +11,9 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        CaptureEvent.getInstance().capture();
+        if (!TextUtils.isEmpty(remoteMessage.getFrom())) {
+            CaptureEvent.getInstance().capture();
+        }
     }
 
 }
